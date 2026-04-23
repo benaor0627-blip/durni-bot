@@ -1,0 +1,64 @@
+{
+  "version": "2.1",
+  "screens": [
+    {
+      "id": "WELCOME_SCREEN",
+      "title": "Bienvenido a Durni",
+      "terminal": false,
+      "data": {
+        "is_authorized": {
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "layout": {
+        "type": "SingleColumnLayout",
+        "children": [
+          {
+            "type": "TextHeading",
+            "text": "Validando acceso..."
+          }
+        ]
+      },
+      "on_enter": {
+        "name": "data_exchange",
+        "payload": {
+          "phone_number": "${user.phone_number}"
+        }
+      }
+    },
+    {
+      "id": "COURSE_SELECTION",
+      "title": "Cursos Disponibles",
+      "terminal": true,
+      "layout": {
+        "type": "SingleColumnLayout",
+        "children": [
+          {
+            "type": "TextHeading",
+            "text": "Selecciona tu curso"
+          },
+          {
+            "type": "Dropdown",
+            "label": "Cursos",
+            "required": true,
+            "data_source": [
+              { "id": "curso_1", "title": "Aceleración Rural Fase 1" },
+              { "id": "curso_2", "title": "Gestión Financiera de Finca" }
+            ]
+          },
+          {
+            "type": "Footer",
+            "label": "Empezar",
+            "on_click_action": {
+              "name": "complete",
+              "payload": {
+                "selected_course": "${form.course_dropdown}"
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
