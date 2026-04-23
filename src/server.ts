@@ -2,7 +2,7 @@ import express, { Request, Response } from 'express';
 import { Pool } from 'pg';
 import dotenv from 'dotenv';
 import axios from 'axios';
-import { COURSES } from './courses';
+import { COURSES, Phase, Capsule } from './courses';
 import { FlowController } from './flowController';
 
 dotenv.config();
@@ -140,7 +140,7 @@ app.post('/webhook', async (req: Request, res: Response) => {
               [estudiante.id, courseId]
             );
 
-            const course = COURSES.find(c => c.id === courseId);
+            const course = COURSES.find((c: any) => Number(c.id) === Number(courseId));
             if (course) {
               await sendWhatsAppMessage(from, { 
                 type: 'text', 
@@ -163,8 +163,8 @@ app.post('/webhook', async (req: Request, res: Response) => {
             const [, capsuleId, qIdx, optIdx] = replyId.split('_');
             const progRes = await pool.query('SELECT * FROM progreso_estudiantes WHERE estudiante_id = $1', [estudiante.id]);
             const progreso = progRes.rows[0];
-            const course = FlowController.getCourse(progreso.curso_id);
-            const capsule = course?.phases.find(p => p.id === progreso.fase_actual)?.capsules.find(c => c.id === Number(capsuleId));
+            const course = FlowController.getCourseById(progreso.curso_id);
+            const capsule = course?.phases.find((p: Phase) => p.id === progreso.fase_actual)?.capsules.find((c: Capsule) => c.id === Number(capsuleId));
 
             if (capsule) {
               const isCorrect = Number(optIdx) === capsule.questions[Number(qIdx)].answer;
