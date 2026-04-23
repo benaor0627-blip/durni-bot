@@ -1,23 +1,23 @@
 import { COURSES, Course, Phase, Capsule } from './courses';
 
 export class FlowController {
-  static getNextStep(courseId: string, faseActual: number, capsulaActual: number) {
-    const course = COURSES.find(c => c.id === courseId);
+  static getNextStep(courseId: number, phaseId: number, capsuleId: number) {
+    const course = COURSES.find(c => Number(c.id) === Number(courseId));
     if (!course) return null;
 
-    const phase = course.phases.find(p => p.id === faseActual);
+    const phase = course.phases.find(p => Number(p.id) === Number(phaseId));
     if (!phase) return null;
 
-    const capsule = phase.capsules.find(c => c.id === capsulaActual);
-    if (!capsule) {
-      // Si no hay más cápsulas en esta fase, pasar al entregable práctico o siguiente fase
+    const capsule = phase.capsules.find(cap => Number(cap.id) === Number(capsuleId));
+    
+    if (capsule) {
+      return { type: 'CAPSULE', capsule };
+    } else {
       return { type: 'PHASE_COMPLETE', phase };
     }
-
-    return { type: 'CAPSULE', capsule };
   }
 
-  static getCourse(id: string) {
-    return COURSES.find(c => c.id === id);
+  static getCourseById(id: number | string): Course | undefined {
+    return COURSES.find(c => Number(c.id) === Number(id));
   }
 }
