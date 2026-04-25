@@ -98,27 +98,32 @@ app.post('/webhook', async (req: Request, res: Response) => {
 
       // CASO 1: Mensaje de Texto (Hola / Reset)
       if (message.type === 'text') {
-        console.log(`Enviando Flow de bienvenida a ${from}`);
-        await sendWhatsAppMessage(from, {
-          type: 'interactive',
-          interactive: {
-            type: 'flow',
-            header: { type: 'text', text: 'Bienvenido a Durni' },
-            body: { text: `¡Hola ${estudiante.nombre}! Soy Durni. ¿Qué curso quieres iniciar hoy?` },
-            footer: { text: 'Programa de Aceleración Rural' },
-            action: {
-              name: 'flow',
-              parameters: {
-                flow_message_version: '3',
-                flow_token: 'unused',
-                flow_id: '888723597532743',
-                flow_cta: 'Seleccionar Curso',
-                flow_action: 'navigate',
-                flow_action_payload: { screen: 'COURSE_SELECTION' }
+        console.log(`Enviando Flow de bienvenida a ${from} con ID: 888723597532743`);
+        try {
+          await sendWhatsAppMessage(from, {
+            type: 'interactive',
+            interactive: {
+              type: 'flow',
+              header: { type: 'text', text: 'Bienvenido a Durni' },
+              body: { text: `¡Hola ${estudiante.nombre}! Soy Durni. ¿Qué curso quieres iniciar hoy?` },
+              footer: { text: 'Programa de Aceleración Rural' },
+              action: {
+                name: 'flow',
+                parameters: {
+                  flow_message_version: '3',
+                  flow_token: 'unused',
+                  flow_id: '888723597532743',
+                  flow_cta: 'Seleccionar Curso',
+                  flow_action: 'navigate',
+                  flow_action_payload: { screen: 'COURSE_SELECTION' }
+                }
               }
             }
-          }
-        });
+          });
+          console.log(`✅ Flow enviado exitosamente a ${from}`);
+        } catch (err: any) {
+          console.error('❌ Error detallado de Meta:', JSON.stringify(err.response?.data || err.message, null, 2));
+        }
         return res.sendStatus(200);
       }
 
