@@ -98,43 +98,60 @@ app.post('/webhook', async (req: Request, res: Response) => {
 
       // CASO 1: Mensaje de Texto (Hola / Reset)
       if (message.type === 'text') {
-        console.log(`Enviando Menú de Bienvenida a ${from}`);
+        console.log(`Enviando Menú con Imagen a ${from}`);
         try {
           await sendWhatsAppMessage(from, {
             type: 'interactive',
             interactive: {
-              type: 'list',
-              header: { type: 'text', text: 'Bienvenido a Durni' },
+              type: 'button',
+              header: {
+                type: 'image',
+                image: {
+                  link: 'https://i.imgur.com/9UTNv6c.png'
+                }
+              },
               body: { text: `¡Hola ${estudiante.nombre}! Soy Durni. ¿Qué curso quieres iniciar hoy?` },
               footer: { text: 'Programa de Aceleración Rural' },
               action: {
-                button: 'Ver Cursos',
-                sections: [
+                buttons: [
                   {
-                    title: 'Cursos Disponibles',
-                    rows: [
-                      { id: 'course_1', title: 'Aceleración Rural', description: 'Inicia tu camino' },
-                      { id: 'course_2', title: 'Finanzas del Campo', description: 'Maneja tu dinero' }
-                    ]
+                    type: 'reply',
+                    reply: {
+                      id: 'course_1',
+                      title: 'Aceleración Rural'
+                    }
+                  },
+                  {
+                    type: 'reply',
+                    reply: {
+                      id: 'course_2',
+                      title: 'Finanzas del Campo'
+                    }
                   }
                 ]
               }
             }
           });
-          console.log(`✅ Menú enviado exitosamente a ${from}`);
+          console.log(`✅ Menú con imagen enviado a ${from}`);
         } catch (err: any) {
           console.error('❌ Error detallado de Meta:', JSON.stringify(err.response?.data || err.message, null, 2));
         }
         return res.sendStatus(200);
       }
 
-      // CASO 2: Respuesta de Lista (Selección de curso)
+      // CASO 2: Respuesta de Lista (Removido, ahora usamos botones)
       if (message.type === 'interactive' && message.interactive.type === 'list_reply') {
-        const selectionId = message.interactive.list_reply.id;
+        // Fallback por si llega una respuesta vieja
+        return res.sendStatus(200);
+      }
+
+      // CASO 3: Botones (Microtest o Selección de Curso)
+      if (message.type === 'interactive' && message.interactive.type === 'button_reply') {
+        const replyId = message.interactive.button_reply.id;
         
-        if (selectionId.startsWith('course_')) {
-          const courseId = selectionId.replace('course_', '');
-          
+        // --- SELECCIÓN DE CURSO ---
+        if (replyId.startsWith('course_')) {
+          const courseId = replyId.replace('course_', '');
           console.log(`Curso seleccionado: ${courseId} por ${from}`);
 
           await pool.query(
@@ -158,13 +175,8 @@ app.post('/webhook', async (req: Request, res: Response) => {
             
             setTimeout(() => sendMicrotest(from, firstCapsule, 0), 3000);
           }
-        }
-        return res.sendStatus(200);
-      }
-
-      // CASO 3: Botones de Microtest (BUTTON_REPLY)
-      if (message.type === 'interactive' && message.interactive.type === 'button_reply') {
-        const replyId = message.interactive.button_reply.id;
+        } 
+        // --- MICROTESTS ---
         
         if (replyId.startsWith('answer_')) {
           const [, capsuleId, qIdx, optIdx] = replyId.split('_');
