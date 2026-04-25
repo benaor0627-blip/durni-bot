@@ -107,7 +107,7 @@ app.post('/webhook', async (req: Request, res: Response) => {
               header: {
                 type: 'image',
                 image: {
-                  link: 'https://i.imgur.com/9UTNv6c.png'
+                  link: 'https://images.unsplash.com/photo-1552599727-4a00af924375?q=80&w=600&auto=format&fit=crop'
                 }
               },
               body: { text: `¡Hola ${estudiante.nombre}! Soy Durni. ¿Qué curso quieres iniciar hoy?` },
