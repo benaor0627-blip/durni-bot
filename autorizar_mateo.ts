@@ -15,8 +15,8 @@ async function autorizarUsuario() {
     ON CONFLICT (celular) DO UPDATE SET nombre = EXCLUDED.nombre;
   `;
   try {
-    await pool.query(query, ['Mateo', 'Durni', '573134912043', '3134912043']);
-    console.log('✅ ¡AUTORIZADO! Mateo Durni (+573134912043) ya está en el sistema.');
+    await pool.query(query, ['Erika', 'Chala', '573183378830', '3183378830']);
+    console.log('✅ ¡AUTORIZADA! Erika Chala (+573183378830) ya está en el sistema.');
   } catch (err) {
     console.error('❌ Error:', err);
   } finally {
