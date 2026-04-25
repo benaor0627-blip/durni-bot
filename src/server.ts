@@ -98,62 +98,66 @@ app.post('/webhook', async (req: Request, res: Response) => {
 
       // CASO 1: Mensaje de Texto (Hola / Reset)
       if (message.type === 'text') {
-        console.log(`Enviando Flow de bienvenida a ${from} con ID: 888723597532743`);
+        console.log(`Enviando Menú de Bienvenida a ${from}`);
         try {
           await sendWhatsAppMessage(from, {
             type: 'interactive',
             interactive: {
-              type: 'flow',
+              type: 'list',
               header: { type: 'text', text: 'Bienvenido a Durni' },
               body: { text: `¡Hola ${estudiante.nombre}! Soy Durni. ¿Qué curso quieres iniciar hoy?` },
               footer: { text: 'Programa de Aceleración Rural' },
               action: {
-                name: 'flow',
-                parameters: {
-                  flow_message_version: '3',
-                  flow_token: 'unused',
-                  flow_id: '888723597532743',
-                  flow_cta: 'Seleccionar Curso',
-                  flow_action: 'navigate',
-                  flow_action_payload: { screen: 'COURSE_SELECTION' }
-                }
+                button: 'Ver Cursos',
+                sections: [
+                  {
+                    title: 'Cursos Disponibles',
+                    rows: [
+                      { id: 'course_1', title: 'Aceleración Rural', description: 'Inicia tu camino' },
+                      { id: 'course_2', title: 'Finanzas del Campo', description: 'Maneja tu dinero' }
+                    ]
+                  }
+                ]
               }
             }
           });
-          console.log(`✅ Flow enviado exitosamente a ${from}`);
+          console.log(`✅ Menú enviado exitosamente a ${from}`);
         } catch (err: any) {
           console.error('❌ Error detallado de Meta:', JSON.stringify(err.response?.data || err.message, null, 2));
         }
         return res.sendStatus(200);
       }
 
-      // CASO 2: Respuesta de Flow (NFM_REPLY)
-      if (message.type === 'interactive' && message.interactive.type === 'nfm_reply') {
-        const response = JSON.parse(message.interactive.nfm_reply.response_json);
-        const courseId = response.selected_course;
+      // CASO 2: Respuesta de Lista (Selección de curso)
+      if (message.type === 'interactive' && message.interactive.type === 'list_reply') {
+        const selectionId = message.interactive.list_reply.id;
         
-        console.log(`Curso seleccionado: ${courseId} por ${from}`);
+        if (selectionId.startsWith('course_')) {
+          const courseId = selectionId.replace('course_', '');
+          
+          console.log(`Curso seleccionado: ${courseId} por ${from}`);
 
-        await pool.query(
-          'INSERT INTO progreso_estudiantes (estudiante_id, curso_id, fase_actual, capsula_actual) VALUES ($1, $2, 1, 1) ON CONFLICT (estudiante_id) DO UPDATE SET curso_id = $2, fase_actual = 1, capsula_actual = 1',
-          [estudiante.id, courseId]
-        );
+          await pool.query(
+            'INSERT INTO progreso_estudiantes (estudiante_id, curso_id, fase_actual, capsula_actual) VALUES ($1, $2, 1, 1) ON CONFLICT (estudiante_id) DO UPDATE SET curso_id = $2, fase_actual = 1, capsula_actual = 1',
+            [estudiante.id, courseId]
+          );
 
-        const course = FlowController.getCourseById(courseId);
-        if (course) {
-          await sendWhatsAppMessage(from, { 
-            type: 'text', 
-            text: { body: `🚀 ¡Excelente! Iniciamos: ${course.title}.` } 
-          });
-          
-          const firstCapsule = course.phases[0].capsules[0];
-          const mediaType = firstCapsule.type === 'video' ? 'video' : 'audio';
-          
-          await sendWhatsAppMessage(from, {
-            [mediaType]: { link: firstCapsule.url, caption: firstCapsule.title }
-          });
-          
-          setTimeout(() => sendMicrotest(from, firstCapsule, 0), 3000);
+          const course = FlowController.getCourseById(Number(courseId));
+          if (course) {
+            await sendWhatsAppMessage(from, { 
+              type: 'text', 
+              text: { body: `🚀 ¡Excelente! Iniciamos: ${course.title}.` } 
+            });
+            
+            const firstCapsule = course.phases[0].capsules[0];
+            const mediaType = firstCapsule.type === 'video' ? 'video' : 'audio';
+            
+            await sendWhatsAppMessage(from, {
+              [mediaType]: { link: firstCapsule.url, caption: firstCapsule.title }
+            });
+            
+            setTimeout(() => sendMicrotest(from, firstCapsule, 0), 3000);
+          }
         }
         return res.sendStatus(200);
       }
