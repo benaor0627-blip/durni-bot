@@ -108,6 +108,12 @@ app.post('/webhook', async (req: Request, res: Response) => {
             type: 'interactive',
             interactive: {
               type: 'button',
+              header: {
+                type: 'image',
+                image: {
+                  link: 'https://files.catbox.moe/gr20pf.png'
+                }
+              },
               body: { text: `¡Hola ${estudiante.nombre}! Veo que estabas tomando el curso *${course?.title}*.\n\n¿Quieres retomar donde lo dejaste o prefieres explorar otros cursos?` },
               action: {
                 buttons: [
@@ -122,6 +128,12 @@ app.post('/webhook', async (req: Request, res: Response) => {
             type: 'interactive',
             interactive: {
               type: 'button',
+              header: {
+                type: 'image',
+                image: {
+                  link: 'https://files.catbox.moe/gr20pf.png'
+                }
+              },
               body: { text: `¡Hola ${estudiante.nombre}! Soy Durni. ¿Qué curso quieres iniciar hoy?` },
               footer: { text: 'Programa de Aceleración Rural' },
               action: {
