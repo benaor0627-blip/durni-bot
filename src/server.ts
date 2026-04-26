@@ -104,12 +104,6 @@ app.post('/webhook', async (req: Request, res: Response) => {
             type: 'interactive',
             interactive: {
               type: 'button',
-              header: {
-                type: 'image',
-                image: {
-                  link: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Hummingbird_icon.svg/512px-Hummingbird_icon.svg.png'
-                }
-              },
               body: { text: `¡Hola ${estudiante.nombre}! Soy Durni. ¿Qué curso quieres iniciar hoy?` },
               footer: { text: 'Programa de Aceleración Rural' },
               action: {
