@@ -100,5 +100,45 @@ export const COURSES: Course[] = [
         deliverable: '📈 Entregable Fase 3: Envía una foto de tu plan de aceleración completo.'
       }
     ]
+  },
+  {
+    id: 2,
+    title: 'Finanzas del Campo',
+    phases: [
+      {
+        id: 1,
+        title: 'Fase 1: Salud Financiera',
+        description: 'Aprende a controlar los números de tu proyecto rural.',
+        capsules: [
+          {
+            id: 1,
+            title: 'Cápsula 1.1: Ingresos vs Egresos',
+            type: 'video',
+            url: 'https://www.w3schools.com/html/mov_bbb.mp4',
+            questions: [
+              {
+                question: '¿Qué es un egreso?',
+                options: ['Dinero que entra', 'Dinero que sale', 'Dinero ahorrado'],
+                answer: 1
+              }
+            ]
+          },
+          {
+            id: 2,
+            title: 'Cápsula 1.2: Presupuesto Básico',
+            type: 'audio',
+            url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+            questions: [
+              {
+                question: 'El presupuesto te ayuda a...',
+                options: ['Gastar más', 'Planificar el futuro', 'Endeudarte'],
+                answer: 1
+              }
+            ]
+          }
+        ],
+        deliverable: '📊 Entregable Fase 1: Envía una foto de tus ingresos y egresos del último mes.'
+      }
+    ]
   }
 ];
