@@ -111,7 +111,7 @@ app.post('/webhook', async (req: Request, res: Response) => {
               header: {
                 type: 'image',
                 image: {
-                  link: 'https://files.catbox.moe/gr20pf.png'
+                  link: 'https://files.catbox.moe/mgztcr.png'
                 }
               },
               body: { text: `¡Hola ${estudiante.nombre}! Veo que estabas tomando el curso *${course?.title}*.\n\n¿Quieres retomar donde lo dejaste o prefieres explorar otros cursos?` },
@@ -131,7 +131,7 @@ app.post('/webhook', async (req: Request, res: Response) => {
               header: {
                 type: 'image',
                 image: {
-                  link: 'https://files.catbox.moe/gr20pf.png'
+                  link: 'https://files.catbox.moe/mgztcr.png'
                 }
               },
               body: { text: `¡Hola ${estudiante.nombre}! Soy Durni. ¿Qué curso quieres iniciar hoy?` },
